@@ -242,6 +242,8 @@ AddEventHandler('getPlayerCoords', function(npcType)
     TriggerServerEvent('saveNpcCoords', npcType, { x = pos.x, y = pos.y, z = pos.z, w = heading })
 end)
 
+local OpenNpcDeleteMenu
+
 local function OpenSingleNpcMenu(type, npcIndex)
     local npcList = coordsFromServer[type] or {}
     local npc = npcList[npcIndex]
@@ -271,7 +273,19 @@ local function OpenSingleNpcMenu(type, npcIndex)
                 TriggerServerEvent('muhaddil-ilegalmedic:DeleteCoords', type, npcIndex)
                 lib.notify({ description = locale('NPC_deleted_successfully'), type = "success" })
                 TriggerServerEvent('muhaddil-ilegalmedic:RequestCoords')
-                OpenNpcDeleteMenu(type)
+
+                local npcList = coordsFromServer[type] or {}
+
+                if #npcList == 0 then
+                    lib.notify({
+                        description = "No hay NPCs para borrar en " .. type,
+                        type = "error"
+                    })
+                    return
+                else
+                    Wait(100)
+                    OpenNpcDeleteMenu(type)
+                end            
             end
         }
     }
@@ -285,7 +299,7 @@ local function OpenSingleNpcMenu(type, npcIndex)
     lib.showContext('single_npc_menu')
 end
 
-local function OpenNpcDeleteMenu(type)
+OpenNpcDeleteMenu = function(type)
     local npcList = coordsFromServer[type] or {}
 
     if #npcList == 0 then
