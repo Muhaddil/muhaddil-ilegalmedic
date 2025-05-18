@@ -27,62 +27,66 @@ local function SpawnPeds()
 
     RequestModel(Config.PedModel)
     while not HasModelLoaded(Config.PedModel) do Wait(0) end
+    local playerData = ESX.GetPlayerData()
 
     for _, spawnPosition in ipairs(coordsFromServer.legal) do
-        local heading = spawnPosition.w
-        local ped = CreatePed(4, GetHashKey(Config.PedModel), spawnPosition.x, spawnPosition.y, spawnPosition.z - 1.0,
-            heading, false, true)
-        SetEntityAsMissionEntity(ped, true, true)
-        SetBlockingOfNonTemporaryEvents(ped, true)
-        SetEntityInvincible(ped, true)
-        FreezeEntityPosition(ped, true)
-        SetModelAsNoLongerNeeded(Config.PedModel)
+        if not spawnPosition.job or (playerData.job and playerData.job.name == spawnPosition.job) then
+            local heading = spawnPosition.w
+            local ped = CreatePed(4, GetHashKey(Config.PedModel), spawnPosition.x, spawnPosition.y, spawnPosition.z - 1.0,
+                heading, false, true)
+            SetEntityAsMissionEntity(ped, true, true)
+            SetBlockingOfNonTemporaryEvents(ped, true)
+            SetEntityInvincible(ped, true)
+            FreezeEntityPosition(ped, true)
+            SetModelAsNoLongerNeeded(Config.PedModel)
 
-        -- Guardamos el ID de la zona que devuelve addBoxZone
-        local zoneId = exports.ox_target:addBoxZone({
-            coords = vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z),
-            size = vector3(1, 1, 2),
-            rotation = heading,
-            debug = false,
-            options = {
-                {
-                    label = locale('press_to_heal'),
-                    icon = 'fas fa-comments',
-                    event = 'muhaddil-ilegalmedic:NPCRevive',
+            -- Guardamos el ID de la zona que devuelve addBoxZone
+            local zoneId = exports.ox_target:addBoxZone({
+                coords = vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z),
+                size = vector3(1, 1, 2),
+                rotation = heading,
+                debug = false,
+                options = {
+                    {
+                        label = locale('press_to_heal'),
+                        icon = 'fas fa-comments',
+                        event = 'muhaddil-ilegalmedic:NPCRevive',
+                    }
                 }
-            }
-        })
+            })
 
-        table.insert(medicTargetZones, zoneId)
-        table.insert(medicPeds, ped)
+            table.insert(medicTargetZones, zoneId)
+            table.insert(medicPeds, ped)
+        end
     end
-
     for _, spawnPosition in ipairs(coordsFromServer.illegal) do
-        local heading = spawnPosition.w
-        local ped = CreatePed(4, GetHashKey(Config.PedModel), spawnPosition.x, spawnPosition.y, spawnPosition.z - 1.0,
-            heading, false, true)
-        SetEntityAsMissionEntity(ped, true, true)
-        SetBlockingOfNonTemporaryEvents(ped, true)
-        SetEntityInvincible(ped, true)
-        FreezeEntityPosition(ped, true)
-        SetModelAsNoLongerNeeded(Config.PedModel)
+        if not spawnPosition.job or (playerData.job and playerData.job.name == spawnPosition.job) then
+            local heading = spawnPosition.w
+            local ped = CreatePed(4, GetHashKey(Config.PedModel), spawnPosition.x, spawnPosition.y, spawnPosition.z - 1.0,
+                heading, false, true)
+            SetEntityAsMissionEntity(ped, true, true)
+            SetBlockingOfNonTemporaryEvents(ped, true)
+            SetEntityInvincible(ped, true)
+            FreezeEntityPosition(ped, true)
+            SetModelAsNoLongerNeeded(Config.PedModel)
 
-        local zoneId = exports.ox_target:addBoxZone({
-            coords = vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z),
-            size = vector3(1, 1, 2),
-            rotation = heading,
-            debug = false,
-            options = {
-                {
-                    label = locale('press_to_heal2'),
-                    icon = 'fas fa-comments',
-                    event = 'muhaddil-ilegalmedic:NPCReviveIllegal',
+            local zoneId = exports.ox_target:addBoxZone({
+                coords = vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z),
+                size = vector3(1, 1, 2),
+                rotation = heading,
+                debug = false,
+                options = {
+                    {
+                        label = locale('press_to_heal2'),
+                        icon = 'fas fa-comments',
+                        event = 'muhaddil-ilegalmedic:NPCReviveIllegal',
+                    }
                 }
-            }
-        })
+            })
 
-        table.insert(medicTargetZones, zoneId)
-        table.insert(medicPeds, ped)
+            table.insert(medicTargetZones, zoneId)
+            table.insert(medicPeds, ped)
+        end
     end
 
     medicPedsSpawned = true
@@ -103,27 +107,28 @@ RegisterCommand('addnpccoords', function(source, args)
     ESX.TriggerServerCallback('muhaddil-ilegalmedic:isAdmin', function(cb)
         local type = args[1]
         if type ~= 'legal' and type ~= 'illegal' then
-            print("Uso: /addnpccoords legal | illegal")
+            lib.notify({ description = locale('usage_addnpccoords'), type = "error" })
             return
         end
 
+        local job = args[2]
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local heading = GetEntityHeading(ped)
         local newCoord = { x = pos.x, y = pos.y, z = pos.z, w = heading }
-        TriggerServerEvent('muhaddil-ilegalmedic:SaveCoords', type, newCoord)
+        TriggerServerEvent('muhaddil-ilegalmedic:SaveCoords', type, newCoord, job)
         lib.notify({ description = locale('NPC_created_successfully'), type = "success" })
     end)
 end)
 
 RegisterCommand('listnpccoords', function()
     ESX.TriggerServerCallback('muhaddil-ilegalmedic:isAdmin', function(cb)
-        print("NPCs legales:")
+        print(locale('legal_npcs') .. ":")
         for _, npc in ipairs(coordsFromServer.legal) do
             print(("%s - %.2f, %.2f, %.2f, %.2f"):format(npc.id, npc.x, npc.y, npc.z, npc.w))
         end
 
-        print("NPCs ilegales:")
+        print(locale('illegal_npcs') .. ":")
         for _, npc in ipairs(coordsFromServer.illegal) do
             print(("%s - %.2f, %.2f, %.2f, %.2f"):format(npc.id, npc.x, npc.y, npc.z, npc.w))
         end
@@ -250,7 +255,7 @@ local function OpenSingleNpcMenu(type, npcIndex)
 
     if not npc then
         lib.notify({
-            description = "NPC no encontrado.",
+            description = locale('npc_not_found'),
             type = "error"
         })
         return
@@ -258,16 +263,16 @@ local function OpenSingleNpcMenu(type, npcIndex)
 
     local options = {
         {
-            title = "Teletransportarse", -- You can modify the title here
+            title = locale('teleport_to_npc'),
             icon = "location-arrow",
             onSelect = function()
                 local playerPed = PlayerPedId()
                 SetEntityCoords(playerPed, npc.x, npc.y, npc.z + 1.0, false, false, false, true)
-                lib.notify({ description = "Teletransportado al NPC.", type = "success" })
+                lib.notify({ description = locale('teleported_to_npc'), type = "success" })
             end
         },
         {
-            title = "Borrar NPC", -- You can modify the title here
+            title = locale('delete_npc'),
             icon = "trash",
             onSelect = function()
                 TriggerServerEvent('muhaddil-ilegalmedic:DeleteCoords', type, npcIndex)
@@ -278,21 +283,21 @@ local function OpenSingleNpcMenu(type, npcIndex)
 
                 if #npcList == 0 then
                     lib.notify({
-                        description = "No hay NPCs para borrar en " .. type,
+                        description = string.format(locale('no_npcs_to_delete'), type),
                         type = "error"
                     })
                     return
                 else
                     Wait(100)
                     OpenNpcDeleteMenu(type)
-                end            
+                end
             end
         }
     }
 
     lib.registerContext({
         id = 'single_npc_menu',
-        title = ("Opciones para NPC %d (%s)"):format(npcIndex, type), -- You can modify the title here
+        title = string.format(locale('npc_options_title'), npcIndex, type),
         options = options
     })
 
@@ -304,7 +309,7 @@ OpenNpcDeleteMenu = function(type)
 
     if #npcList == 0 then
         lib.notify({
-            description = "No hay NPCs para borrar en " .. type,
+            description = locale('no_npcs_to_delete', type),
             type = "error"
         })
         return
@@ -314,8 +319,8 @@ OpenNpcDeleteMenu = function(type)
 
     for i, npc in ipairs(npcList) do
         table.insert(options, {
-            title = ("NPC %d (%.2f, %.2f, %.2f)"):format(i, npc.x, npc.y, npc.z),
-            description = "Heading: " .. npc.w,
+            title = string.format(locale('npc_entry_title'), i, npc.x, npc.y, npc.z),
+            description = string.format(locale('npc_heading'), npc.w),
             icon = "trash",
             onSelect = function()
                 OpenSingleNpcMenu(type, i)
@@ -325,7 +330,7 @@ OpenNpcDeleteMenu = function(type)
 
     lib.registerContext({
         id = 'npc_delete_menu',
-        title = 'Eliminar NPCs - ' .. type, -- You can modify the title here
+        title = string.format(locale('delete_npcs_title'), type),
         options = options
     })
 
@@ -350,3 +355,91 @@ RegisterCommand('delnpccoords', function(source, args)
     end)
 end)
 
+local lastPlayerJob = nil
+
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function(job)
+    if not lastPlayerJob or lastPlayerJob.name ~= job.name then
+        Wait(1000)
+        lastPlayerJob = job
+        ClearMedicPeds()
+        SpawnPeds()
+    end
+end)
+
+local function promptAddNpc(type)
+    local input = lib.inputDialog(locale('admin_add_' .. type), {
+        {
+            type = "input",
+            label = locale('admin_job_optional'),
+            description = locale('admin_job_optional_desc'),
+            required = false
+        }
+    })
+    if not input then return end
+    local job = input[1]
+    if job and job ~= "" then
+        ExecuteCommand(("addnpccoords %s %s"):format(type, job))
+    else
+        ExecuteCommand(("addnpccoords %s"):format(type))
+    end
+end
+
+local function OpenAdminNpcMenu()
+    local options = {
+        {
+            title = locale('admin_add_legal'),
+            icon = "plus",
+            onSelect = function()
+                promptAddNpc('legal')
+            end
+        },
+        {
+            title = locale('admin_add_illegal'),
+            icon = "plus",
+            onSelect = function()
+                promptAddNpc('illegal')
+            end
+        },
+        {
+            title = locale('admin_del_legal'),
+            icon = "trash",
+            onSelect = function()
+                ExecuteCommand("delnpccoords legal")
+            end
+        },
+        {
+            title = locale('admin_del_illegal'),
+            icon = "trash",
+            onSelect = function()
+                ExecuteCommand("delnpccoords illegal")
+            end
+        },
+        {
+            title = locale('admin_list'),
+            icon = "list",
+            onSelect = function()
+                ExecuteCommand("listnpccoords")
+                lib.notify({ description = locale('admin_list_console'), type = "info" })
+            end
+        }
+    }
+
+    lib.registerContext({
+        id = 'npc_admin_menu',
+        title = locale('admin_menu_title'),
+        options = options
+    })
+
+    lib.showContext('npc_admin_menu')
+end
+
+RegisterCommand('npccadmin', function(source, args)
+    ESX.TriggerServerCallback('muhaddil-ilegalmedic:isAdmin', function(isAdmin)
+        if not isAdmin then
+            lib.notify({ description = locale('no_perms'), type = "error" })
+            return
+        end
+        OpenAdminNpcMenu()
+    end)
+end)

@@ -112,7 +112,7 @@ ESX.RegisterServerCallback('muhaddil-ilegalmedic:isAdmin', function(src, cb, par
 end)
 
 RegisterNetEvent('muhaddil-ilegalmedic:SaveCoords')
-AddEventHandler('muhaddil-ilegalmedic:SaveCoords', function(type, coord)
+AddEventHandler('muhaddil-ilegalmedic:SaveCoords', function(type, coord, job)
     if type ~= 'legal' and type ~= 'illegal' then return end
     if coord and coord.x and coord.y and coord.z and coord.w then
         local newCoord = {
@@ -120,11 +120,11 @@ AddEventHandler('muhaddil-ilegalmedic:SaveCoords', function(type, coord)
             x = coord.x,
             y = coord.y,
             z = coord.z,
-            w = coord.w
+            w = coord.w,
+            job = job -- Nuevo campo opcional
         }
         table.insert(npcCoords[type], newCoord)
         SaveCoords()
-
         TriggerClientEvent('muhaddil-ilegalmedic:ReloadNPCs', -1)
     end
 end)

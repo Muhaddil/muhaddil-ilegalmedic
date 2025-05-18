@@ -48,11 +48,12 @@ Edit `config.lua` to customize the script:
 
 ## Admin Commands
 
-- `/addnpccoords legal` — Add a legal medic NPC at your current position.
-- `/addnpccoords illegal` — Add an illegal medic NPC at your current position.
+- `/addnpccoords legal [job]` — Add a legal medic NPC at your current position.
+- `/addnpccoords illegal [job]` — Add an illegal medic NPC at your current position.
 - `/delnpccoords legal` — Open a menu to delete legal medic NPCs.
 - `/delnpccoords illegal` — Open a menu to delete illegal medic NPCs.
 - `/listnpccoords` — Print all saved NPC coordinates (legal and illegal) to the console.
+- `/npccadmin` — Open an admin menu to manage NPCs.
 
 Only administrators can use these commands.
 
