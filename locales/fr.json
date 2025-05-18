@@ -1,0 +1,12 @@
+{
+  "press_to_heal": "Parler au medecin",
+  "press_to_heal2": "Parler au medecin illégal",
+  "not_enough_money": "Vous n'avez pas assez d'argent.",
+  "successfully_paid": "Le medecin vous a soigné.",
+  "player_is_not_dead": "Vous n'êtes pas mort !",
+  "enough_ems": "Il a suffisemment de joueur medecin, trouvez en un !",
+  "doctor_checking_you": "Le docteur s'occupe de vous...",
+  "NPC_deleted_successfully": "Le NPC a été supprimé avec succès!",
+  "NPC_created_successfully": "Le NPC a été créé avec succès!",
+  "no_perms": "Vous n'avez pas les permissions pour faire ça!"
+}

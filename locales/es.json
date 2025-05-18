@@ -1,0 +1,12 @@
+{
+  "press_to_heal": "Visitar Paramédico",
+  "press_to_heal2": "Visitar Paramédico Ilegal",
+  "not_enough_money": "No tienes suficiente dinero",
+  "successfully_paid": "¡El doctor te ha curado!",
+  "player_is_not_dead": "No estas muerto",
+  "enough_ems": "¡Hay muchos paramédicos, por favor busca uno!",
+  "doctor_checking_you": "El doctor te está revisando...",
+  "NPC_deleted_successfully": "¡El NPC se ha eliminado correctamente!",
+  "NPC_created_successfully": "¡El NPC se ha creado correctamente!",
+  "no_perms": "¡No tienes permisos para hacer eso!"
+}

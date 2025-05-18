@@ -1,0 +1,12 @@
+{
+  "press_to_heal": "Visit EMS",
+  "press_to_heal2": "Visit Ilegal EMS",
+  "not_enough_money": "You don't have enough money",
+  "successfully_paid": "The doctor checked you!",
+  "player_is_not_dead": "Player is not dead!",
+  "enough_ems": "There are a lot of EMS, please search one!",
+  "doctor_checking_you": "Doctor is checking you...",
+  "NPC_deleted_successfully": "The NPC has been deleted successfully!",
+  "NPC_created_successfully": "The NPC has been created successfully!",
+  "no_perms": "You don't have permission to do that!"
+}
